@@ -65,7 +65,7 @@
       thisProduct.initOrderForm();
       thisProduct.processOrder();
 
-      console.log("new Product: ", thisProduct);
+      // console.log("new Product: ", thisProduct);
     }
 
     renderInMenu() {
@@ -98,6 +98,9 @@
       thisProduct.priceElem = thisProduct.element.querySelector(
         select.menuProduct.priceElem
       );
+      thisProduct.imageWrapper = thisProduct.element.querySelector(
+        select.menuProduct.imageWrapper
+      );
     }
 
     initAccordion() {
@@ -119,9 +122,9 @@
         }
       });
     }
+
     initOrderForm() {
       const thisProduct = this;
-      console.log("initOrderForm");
       thisProduct.form.addEventListener("submit", function (event) {
         event.preventDefault();
         thisProduct.processOrder();
@@ -138,6 +141,7 @@
         thisProduct.processOrder();
       });
     }
+
     processOrder() {
       const thisProduct = this;
       const formData = utils.serializeFormToObject(thisProduct.form);
@@ -149,7 +153,6 @@
         console.log(param);
         for (let optionId in param.options) {
           const option = param.options[optionId];
-          console.log(option);
 
           const optionSelected =
             formData.hasOwnProperty(paramId) &&
@@ -159,6 +162,23 @@
             price += option.price;
           } else if (!optionSelected && option.default) {
             price -= option.price;
+          }
+
+          const productImages = thisProduct.imageWrapper.querySelectorAll(
+            `.${paramId}-${optionId}`
+          );
+          console.log(productImages);
+          if (
+            (optionSelected && option.default) ||
+            (optionSelected && !option.default)
+          ) {
+            for (let image of productImages) {
+              image.classList.add(classNames.menuProduct.imageVisible);
+            }
+          } else {
+            for (const image of productImages) {
+              image.classList.remove(classNames.menuProduct.imageVisible);
+            }
           }
         }
       }
